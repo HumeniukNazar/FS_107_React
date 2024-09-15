@@ -1,18 +1,33 @@
+import { useState } from 'react';
 import todosData from './../../assets/todos.json';
 import { TodoItem } from './TodoItem';
 import s from './TodoList.module.css';
+import { nanoid } from 'nanoid';
 export const TodoList = () => {
+  const [todos, setTodos] = useState(todosData);
+  const [newTodoValue, setNewTodoValue] = useState("");
+  const handleDeleteTodo = (id) => {
+    setTodos(todos.filter(prev => prev.id !== id));
+  };
+
+  const handleAddTodo = () => {
+    const newTodo = { todo: newTodoValue, id: nanoid() };
+    setTodos(prev => [...prev, newTodo]);
+    setNewTodoValue('')
+  };
+
   return (
-    <>
+    <div className={s.wrapper}>
       <div className='flex'>
-        <input className={s.input} />
-        <button className='btn border'>Add</button>
+        <input value={newTodoValue} onChange={e => setNewTodoValue(e.target.value)}
+          className={s.input} />
+        <button onClick={handleAddTodo} className='btn border'>Add</button>
       </div>
       <ul className={s.list}>
-        {todosData.map(item => (
-          <TodoItem key={item.id} {...item} />
+        {todos.map(item => (
+          <TodoItem key={item.id} {...item} handleDeleteTodo={handleDeleteTodo} />
         ))}
       </ul>
-    </>
+    </div>
   );
 };
